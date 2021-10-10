@@ -1,6 +1,7 @@
 import React, {forwardRef} from 'react'
 import PropTypes from 'prop-types'
-
+import Filters from './Filters' 
+import './filtermenu.scss'
 const FilterMenu = forwardRef(({show, children}, ref)=>{
     return(
         <div>
@@ -9,7 +10,7 @@ const FilterMenu = forwardRef(({show, children}, ref)=>{
                     <div className="menu-main" ref={ref}>
                         <p>Filter by:</p>
                         <div className="filters" data-testid='filterSelection'>
-                            {children}
+							<Filters />
                         </div>
                     </div>
                 </div>
