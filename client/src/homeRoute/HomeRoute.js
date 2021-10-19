@@ -4,7 +4,7 @@ import './HomeRoute.scss'
 import PrivacyNotice from '../privacyNotice/PrivacyNotice'
 import PolicyTable from '../policyTable/PolicyTable'
 import {fetchPoliciesFromServer} from '../store/policyList.duck'
-
+import VideoTestimonialForm from '../videoTestimonials/VideoTestimonialForm'
 const HomeRoute = () => {
   const {privacyAccepted, privacyCancelled} = useSelector(({privacy}) => privacy)
   const {items} = useSelector(({policyList}) => policyList)
@@ -34,6 +34,7 @@ const HomeRoute = () => {
             {!privacyAccepted && <PrivacyNotice/>}
             {privacyAccepted && <PolicyTable/>}
             {privacyCancelled && !privacyAccepted && renderPrivacyCancelContent()}
+			<VideoTestimonialForm/>
           </div>
         </div>
       </div>

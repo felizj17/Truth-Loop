@@ -16,7 +16,7 @@ const FilterMenu = forwardRef(({show}, ref)=>{
 	useEffect(()=>{
 		setLocations(filters.location)
 		setCategories(filters.category)
-	},[filters.location,filters.category])
+	},[])
 	useEffect(()=>{
 		if(show==false){
 			applyFilters(locations,categories)

@@ -1,18 +1,31 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import {useDispatch,useSelector} from 'react-redux'
-import {States,Categories} from './selections'
 import PropTypes from 'prop-types'
+import {AppliedFilters} from './AppliedFilters'
+import {States, Categories} from './selections'
 import { updateAppSettings } from '../store/appSettings.duck'
 
-export default function Filters(){
+export const Filters=(props)=>{
 	const dispatch = useDispatch()
+	const filterRef = useRef()
 	const [locations, setLocations] = useState([])
 	const [categories, setCategories] = useState([])
 	const { filters } = useSelector(({appSettings})=> appSettings)
 	useEffect(()=>{
 		setLocations(filters.location)
 		setCategories(filters.category)
-	},[])
+	},[filters.location,filters.category])
+	useEffect(()=>{
+		const checkClickOutside=(e)=>{
+			if (filterRef.current && !filterRef.current.contains(e.target)) {
+				applyFilters(locations,categories)
+			}
+		}
+		document.addEventListener('mousedown', checkClickOutside)
+		return ()=>{
+			document.removeEventListener('mousedown', checkClickOutside)
+		}
+	})
 	const handleFilters = (e) => {
 		if(e.target.name === 'states'){
 			setLocations([...locations, e.target.value])
@@ -21,6 +34,7 @@ export default function Filters(){
 		}
 	}
 	const applyFilters=(locations, categories)=>{
+
 		let payload = {
 			filters:{
 				location:locations,
@@ -29,9 +43,30 @@ export default function Filters(){
 		}
 		dispatch(updateAppSettings(payload))
 	}
+	const deleteFilter=(name,index)=>{
+		if(name == 'states'){
+			locations.splice(index,1)
+			setLocations([...locations])
+		}
+		else{
+			categories.splice(index,1)
+			setCategories([...categories])
+		}
+	}
+	const clearFilters = () => {
+
+		let payload={
+			filters:{
+				location:[],
+				category:[]
+			}
+		}
+		dispatch(updateAppSettings(payload))
+	}
+	
 	return(
-		<div>
-			<AppliedFilters states={locations} categories={categories} />
+		<div ref={filterRef}>
+			<AppliedFilters states={locations} categories={categories} delete={deleteFilter} />
 			<label>State: </label>
 			<select
 			className="select"
@@ -58,27 +93,11 @@ export default function Filters(){
 			}
 			</select>
 			<button type='button' onClick={()=>applyFilters(locations,categories)}>apply</button>
+			<button type='button' onClick={()=>clearFilters()}>Clear</button>
 		</div>
 	)
 }
 
-const AppliedFilters = (props) => {
-	return(
-		<div className="applied-filters">
-			<div className="applied-filter">
-				{props.states.map((state,index)=>(
-					<p key={`state-filter-${index}`}>{state}</p>
-				))}
-			</div>
-			<div className="applied-filter">
-				{props.categories.map((cat,index)=>(
-					<p key={`category-filter-${index}`}>{cat}</p>
-				))}
-			</div>
-		</div>
-	)
-}
-AppliedFilters.propTypes = {
-	states:PropTypes.array,
-	categories:PropTypes.array
+Filters.propTypes = {
+	show:PropTypes.bool
 }

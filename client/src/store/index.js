@@ -7,7 +7,6 @@ import policyReducer from './policy.duck'
 import privacyReducer from './privacy.duck'
 
 const saveToLocalStorage = (state) => {
-  console.log(state)
   try {
     localStorage.setItem('state', JSON.stringify(state))
   } catch (e) {
